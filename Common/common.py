@@ -47,15 +47,49 @@ def cosinValue(vec1, vec2):
 
     return result1/((result2 * result3) ** 0.5)
 
-def sort_dict(dict_sim):
+def sortDict(dict_sim):
     '''
     对疾病对根据疾病相似性值进行排序
-    :param dict_sim:
+    :param dict_sim: dict，表示一个需要排序的字典，key：str，value：float
     :return:
     '''
     sorted_dis_sim = sorted(dict_sim.items(), key=lambda x: x[1], reverse=True)
 
     return sorted_dis_sim
+
+def normalizeList(data_list, col = 1):
+    '''
+    对list按照某一列进行归一化处理
+    :param data_list: 二维list
+    :param col: int，表示要标准化的列。所选列必须为数值
+    :return:
+    '''
+    nor_col = [float(x[col]) for x in data_list]
+    min_value = min(nor_col)
+    max_value = max(nor_col)
+    new_nor_col = [(x-min_value)/(max_value - min_value) for x in nor_col]
+    for i in range(0, len(new_nor_col)):
+        data_list[i][col] = new_nor_col[i]
+
+    return data_list
+
+def normalizeDict(data_dict, over_value = 0):
+    '''
+    对字典按照value进行归一化处理
+    :param data_dict: dict，表示要进行归一化的dict。value必须为数值
+    :param  over_value: float，表示阈值。超过此值则保存，否则不保存
+    :return:
+    '''
+    new_data_dict = {}
+    values = list(data_dict.values())
+    min_value = min(values)
+    max_value = max(values)
+    for key, value in data_dict.items():
+        new_value = (float(value) - min_value) / (max_value - min_value)
+        if new_value > over_value:
+            new_data_dict [key] = new_value
+
+    return new_data_dict
 
 
 if __name__ == '__main__':
