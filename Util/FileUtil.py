@@ -8,6 +8,8 @@
 #-------------------------------------------------------------------------------
 import sys
 import os
+import time
+
 from collections import defaultdict
 
 def readFile2DictSet(input_file, sep = "\t", header = False):
@@ -27,12 +29,14 @@ def readFile2DictSet(input_file, sep = "\t", header = False):
         sys.exit(0)
 
     dict_set = defaultdict(set)
-    for line in lines:
-        if header:
-            next(lines)
-        else:
-            line_info = line.strip().split(sep)
-            dict_set[line_info[0]].add(line_info[1])
+
+    line_index = 0
+    if header:
+        line_index = 1
+
+    for index in range(line_index, len(lines)):
+        line_info = lines[index].strip().split(sep)
+        dict_set[line_info[0]].add(line_info[1])
 
     return dict_set
 
@@ -53,12 +57,13 @@ def readFile2List(input_file, header = False, sep = "\t"):
         print("the file path is wrong!!!")
         sys.exit(0)
 
+    line_index = 0
+    if header:
+        line_index = 1
+
     data_list = []
-    for line in lines:
-        if header:
-            next(lines)
-        else:
-            data_list.append(line.strip().split(sep))
+    for index in range(line_index, len(lines)):
+        data_list.append(lines[index].strip().split(sep))
 
     return data_list
 
@@ -72,20 +77,19 @@ def writeList2File(dataset, output_file):
     :return:
     '''
     if os.path.isfile(output_file):
-        print("output file is not a file!!!")
-        sys.exit(0)
-    else:
-        file = os.path.split(output_file)
-        if not os.path.exists(file[0]):
-            print("mkdirs->{}".format(file[0]))
-            os.makedirs(file[0])
+        print("this file has been existed!!!")
 
-        # 在文件夹没有问题的情况下，将数据写入文件
-        f = open(output_file, mode="w+", encoding="utf-8")
-        for line in dataset:
-            f.write(str(line) + "\n")
-        f.close()
-        print("{} has been written.".format(output_file))
+    file = os.path.split(output_file)
+    if not os.path.exists(file[0]):
+        print("mkdirs->{}".format(file[0]))
+        os.makedirs(file[0])
+
+    # 在文件夹没有问题的情况下，将数据写入文件
+    f = open(output_file, mode="w+", encoding="utf-8")
+    for line in dataset:
+        f.write(str(line) + "\n")
+    f.close()
+    print("{} has been written.".format(output_file))
 
 
 def writeSortedDic2File(sortedDic, output_file):
@@ -96,13 +100,12 @@ def writeSortedDic2File(sortedDic, output_file):
     :return:
     '''
     if os.path.isfile(output_file):
-        print("output file is not a file!!!")
-        sys.exit(0)
-    else:
-        file = os.path.split(output_file)
-        if not os.path.exists(file[0]):
-            print("mkdirs->{}".format(file[0]))
-            os.makedirs(file[0])
+        print("this file has been existed!!!")
+
+    file = os.path.split(output_file)
+    if not os.path.exists(file[0]):
+        print("mkdirs->{}".format(file[0]))
+        os.makedirs(file[0])
 
     # -------------------------------------------------------------
     f = open(output_file, mode = "w+", encoding="utf-8")
@@ -120,13 +123,12 @@ def writeDic2File(dic, output_file):
     :return:
     '''
     if os.path.isfile(output_file):
-        print("output file is not a file!!!")
-        sys.exit(0)
-    else:
-        file = os.path.split(output_file)
-        if not os.path.exists(file[0]):
-            print("mkdirs->{}".format(file[0]))
-            os.makedirs(file[0])
+        print("this file has been existed!!!")
+
+    file = os.path.split(output_file)
+    if not os.path.exists(file[0]):
+        print("mkdirs->{}".format(file[0]))
+        os.makedirs(file[0])
 
     # ----------------------------------------------------------
     f = open(output_file, mode = "w+", encoding = "utf-8")
@@ -135,6 +137,65 @@ def writeDic2File(dic, output_file):
     f.close()
     print("{} has been written.".format(output_file))
 
+def writeDicSet2File(dic, output_file):
+    '''
 
-if __name__ == '__main__':
-    pass
+    :param dic:
+    :param output_file:
+    :return:
+    '''
+    if os.path.isfile(output_file):
+        print("this file has been existed!!!")
+
+    file = os.path.split(output_file)
+    if not os.path.exists(file[0]):
+        print("mkdirs->{}".format(file[0]))
+        os.makedirs(file[0])
+
+    # ----------------------------------------------------------
+    f = open(output_file, mode = "w+", encoding = "utf-8")
+    for key, value in dic.items():
+        line = " ".join([str(x) for x in value])
+        f.write("{} {}\n".format(key, line))
+    f.close()
+    print("{} has been written.".format(output_file))
+
+
+def write_sims(sim_dict, output_file, header=False, sep='\t'):
+    """
+    write dict contains similarities between each two entities (e.g. diseases)
+    to a file
+    :param sim_dict: dict, key-value (string-dict<string-float>):
+    {entity1:{entity2: sim1, entity3: sim2,},}
+    :param output_file: file path to a file
+    :param header: boolean, need a head or not, if True, the head will be
+    "V1sepV2sepsim",default False
+    :param sep: delimiter, default '\t'
+    :return: None
+    """
+    if os.path.isfile(output_file):
+        print("this file has been existed!!!")
+
+    file = os.path.split(output_file)
+    if not os.path.exists(file[0]):
+        print("mkdirs->{}".format(file[0]))
+        os.makedirs(file[0])
+
+    # ----------------------------------------------------------
+    f = open(output_file, mode='w', encoding= "utf-8")
+    if header:
+        f.write("d1" + sep + "d2" + sep + "sim\n")
+    for k1 in sim_dict.keys():
+        for k2 in sim_dict[k1].keys():
+            f.write(str(k1) + sep + str(k2) + sep + str(sim_dict[k1][k2]) + "\n")
+    f.close()
+
+    print("{} has been written.".format(output_file))
+
+
+if __name__ == "__main__":
+
+    for i in range(1,101):
+        sys.stdout.write('\r{}%'.format( i))
+        time.sleep(0.1)
+        sys.stdout.flush()
