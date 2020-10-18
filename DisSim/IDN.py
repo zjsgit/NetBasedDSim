@@ -44,8 +44,8 @@ def calculateDisSim(lines, output_file):
                 dis_sim["{}\t{}".format(disease[di1], disease[di2])] = cos_value
 
     print("step 3: sort disease similarity and write file->{}".format(output_file))
-    sorted_sis_sim = sorted(dis_sim.items(), key= lambda x:x[1], reverse = True)
-    FileUtil.writeSortedDic2File(sorted_sis_sim, output_file)
+    sorted_dis_sim = sorted(dis_sim.items(), key= lambda x:x[1], reverse = True)
+    FileUtil.writeSortedDic2File(sorted_dis_sim, output_file)
 
 
 
