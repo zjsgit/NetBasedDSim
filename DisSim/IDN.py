@@ -10,13 +10,15 @@
 
 import math
 import numpy as np
+from sklearn.metrics.pairwise import cosine_similarity
 
 from Common import common
+from Util import FileUtil
 
-def calculateDisSim(lines):
+def calculateDisSim(lines, output_file):
 
-    disease2item = common.list2DictSet(lines, key = 1, value = 2)
-    item2disease = common.list2DictSet(lines, key = 2, value = 1)
+    disease2item = common.list2DictSet(lines, key=1, value=2)
+    item2disease = common.list2DictSet(lines, key=2, value=1)
 
     disease = list(disease2item.keys())
     item = list(item2disease.keys())
@@ -38,10 +40,13 @@ def calculateDisSim(lines):
     for di1 in range(0, len(disease)):
         for di2 in range(di1 + 1, len(disease)):
             cos_value = common.cosinValue(vectors[di1], vectors[di2])
-            if cos_value > 0:
+            if cos_value != 0:
                 dis_sim["{}\t{}".format(disease[di1], disease[di2])] = cos_value
 
-    return dis_sim
+    print("step 3: sort disease similarity and write file->{}".format(output_file))
+    sorted_sis_sim = sorted(dis_sim.items(), key= lambda x:x[1], reverse = True)
+    FileUtil.writeSortedDic2File(sorted_sis_sim, output_file)
+
 
 
 
