@@ -12,6 +12,7 @@ the DisSim folder contains the methods for disease similarity.
 the Main.py is the entrance for the package.
 
 # ------------------------------------------------------------------------------------------
+python 3.6 version
 NetBasedDSim need several packages:
 gensim-3.6.0
 networkx-2.1
