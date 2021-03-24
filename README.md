@@ -32,7 +32,7 @@ Besides, theare are two public resources for disease similarity implemented by [
 
 -----------------------------------
 ## Installation
------------------------------------
+
 * software
  > python 3
 * python package
